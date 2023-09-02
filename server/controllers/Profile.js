@@ -1,30 +1,26 @@
 const Profile = require('../models/Profile');
 const User = require("../models/User");
+const { uploadImageToCloudinary } = require("../utils/imageUploader");
 
 exports.updateProfile = async(req, res)=>{
     try {
         //get data
-        const {gender, dateOfBirth="", about="", contactNumber } = req.body;
+        const { dateOfBirth="", about="", contactNumber } = req.body;
 
         //get userID
         const id = req.user.id;
-
-        //validation
-        if(!gender || !contactNumber || !id){
-            return res.status(401).json({success:false, message: "Please fill all the fields"});
-        };
         
         //find profile
         const userDetails = await User.findById(id);
-        const profileId = userDetails.additionalDetails;
-        const profileDetails = await Profile.findById(profileId)
+        const profile = await Profile.findById(userDetails.additionalDetails);
+
 
         //update profile 
-        profileDetails.dateOfBirth = dateOfBirth;
-        profileDetails.about = about;
-        profileDetails.gender = gender;
-        profileDetails.contactNumber = contactNumber;
-        await profileDetails.save();
+        profile.dateOfBirth = dateOfBirth;
+        profile.about = about;
+        // profile.gender = gender;
+        profile.contactNumber = contactNumber;
+        await profile.save();
     
         //return response
         return res.status(200).json({
@@ -51,8 +47,8 @@ exports.deleteAccount = async(req,res)=>{
         const id = req.user.id
 
         //validation
-        const userDetails = await User.findById(id);
-        if(!userDetails){
+        const user = await User.findById({_id:id});
+        if(!user){
             return res.status(404).json({
                 success: false,
                 message: 'User not found'
@@ -60,10 +56,10 @@ exports.deleteAccount = async(req,res)=>{
         };
 
         //delete profile
-        await Profile.findByIdAndDelete({_id:userDetails.additionalDetails});
+        await Profile.findByIdAndDelete({_id:user.userDetails});
 
         //delete user
-        await User.findByIdAndDelete({_id:id});
+        await user.findByIdAndDelete({_id:id});
 
         //return res
         return res.status(200).json({
