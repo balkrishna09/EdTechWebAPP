@@ -95,7 +95,6 @@ exports.createCourse = async(req,res)=>{
 }
 
 //getAllcourses handler funciton
-
 exports.getAllCourses = async(req ,res)=>{
     try {
         const allCourses = await Course.find({},{courseName:true, 
@@ -120,4 +119,52 @@ exports.getAllCourses = async(req ,res)=>{
             error:error.message
         })
     }
+}
+
+
+//getCourseDetails
+exports.getCourseDetails = async(req, res)=>{
+	try {
+		
+		const{courseId} = req.body;
+
+		//find course details 
+		const courseDetails = await Course.find({_id:courseId})
+												.populate({
+													path:"instructor" ,
+													populate:{
+														path:"additionalDetails",
+													}
+												})
+												.populate("category")
+												.populate("ratingAndReviews")
+												.populate({
+													path:"courseContent",
+													populate:{
+														path:"subSection"
+													}
+												})
+												.exec();
+	    //validation 
+		if(!courseDetails){
+			return res.status(400).json({
+				success :false,
+				message:`Course Not Found with id ${courseId}`
+			});
+		};
+
+		//return res
+		return res.status(200).json({
+			success  :true,
+			message:"Course details fetch successfully",
+			data:courseDetails
+		});
+		
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({
+			status: false,
+			message: error.message,
+		})
+	}
 }
