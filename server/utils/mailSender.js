@@ -6,16 +6,18 @@ const mailSender = async(email, title, body) =>{
             host:process.env.MAIL_HOST,
             auth:{
                 user: process.env.MAIL_USER,
-                pass: process.env.MAIL_PASSWORD
+                pass: process.env.MAIL_PASS
             }
         })
 
         let info = await transporter.sendMail({
-            from:"Balkrishna StudyNotion",
+            from:"BK EdTech",
             to:`${email}`, // list of receivers
-            subject: `${title} - Balkrishna`,
-            text: `Hello,\n\n ${body}\n\nThank You!`
+            subject: `${title} - Bk's EdTech`,
+            html: `${body}`,
         })
+        console.log(info);
+        return info;
         
     } catch (error) {
         console.log(error.message);

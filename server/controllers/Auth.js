@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const mailSender = require("../utils/mailSender");
 require("dotenv").config();
 const { passwordUpdated } = require("../mail/templates/passwordUpdate");
+const Profile = require('../models/Profile')
 
 //sendotp
 exports.sendOTP = async (req, res) => {
@@ -24,11 +25,11 @@ exports.sendOTP = async (req, res) => {
     }
 
     //generate otp
-    var otp = otpGenerator.generate(6, {
-      upperCaseAlphabets: false,
-      lowerCaseAlphabets: false,
-      specialChars: false,
-    });
+		var otp = otpGenerator.generate(6, {
+			upperCaseAlphabets: false,
+			lowerCaseAlphabets: false,
+			specialChars: false,
+		});
     console.log("OTP Generated ", otp);
 
     //check unique otp
@@ -36,10 +37,7 @@ exports.sendOTP = async (req, res) => {
     while (result) {
       otp = otpGenerator.generate(6, {
         upperCaseAlphabets: false,
-        lowerCaseAlphabets: false,
-        specialChars: false,
       });
-      const result = await OTP.findOne({ otp: otp });
     }
 
     const otpPayload = { email, otp };
@@ -52,6 +50,7 @@ exports.sendOTP = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "OTP sent Succesfully",
+      OTP: otp
     });
   } catch (error) {
     console.log(error);
@@ -115,12 +114,12 @@ exports.signUp = async (req, res) => {
       .limit(1);
     console.log(recentOtp);
     //validate OTP
-    if (recentOtp.length == 0) {
+    if (recentOtp.length === 0) {
       return res.status(502).json({
         success: false,
         error: "OTP is expired or Not Found",
       });
-    } else if (otp !== recentOtp.otp) {
+    } else if (otp !== recentOtp[0].otp) {
       return res.status(400).json({
         sucess: false,
         mesage: "Invalid OTP",
@@ -147,7 +146,7 @@ exports.signUp = async (req, res) => {
       password: hashedPassword,
       accountType,
       additionalDetails: profileDetails._id,
-      image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstname} ${lastname}`,
+      image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`,
     });
 
     //return res
@@ -160,7 +159,8 @@ exports.signUp = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "User cannot be registered please try one again",
+      message: "User cannot be registered please try once again",
+      error: error.message
     });
   }
 };
@@ -204,7 +204,7 @@ exports.login = async (req, res) => {
 
       //create cookie and send response
       const options = {
-        expires: new Date(Dare.now() + 3 * 24 * 60 * 60 * 1000),
+        expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
         httpOnly: true,
       };
       res.cookie("token", token, options).status(200).json({
@@ -224,7 +224,7 @@ exports.login = async (req, res) => {
     return res.status(400).json({
       success: false,
       message: "something went wrong",
-      error: error.mesage,
+      error: error.message,
     });
   }
 };

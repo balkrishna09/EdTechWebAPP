@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-require("dotenv").consif();
+require("dotenv").config();
 const User = require("../models/User");
 
 
@@ -69,7 +69,7 @@ exports.isStudent = async(req, res, next)=>{
 }
 
 //isAdmin
-exports.isAdminAdmin = async(req, res, next)=>{
+exports.isAdmin = async(req, res, next)=>{
     try {
         if(req.user.accountType !== "Admin"){
             return res.status(400).json({

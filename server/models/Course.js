@@ -6,10 +6,9 @@ const courseSchema = new mongoose.Schema({
     },
     courseDescription:{
         type: String,
-        required:true,
     },
     instructor:{
-        types:mongoose.Schema.Types.ObjectId,
+        type :mongoose.Schema.Types.ObjectId,
         ref:"User",
         required:true
     },
@@ -18,7 +17,7 @@ const courseSchema = new mongoose.Schema({
     },
     courseContent:[
         {
-            type:mongoose.Schema.Types.ObjectId,
+            type: mongoose.Schema.Types.ObjectId,
             ref:"Section"
         },
     ],
@@ -26,13 +25,13 @@ const courseSchema = new mongoose.Schema({
         {
             type:mongoose.Schema.Types.ObjectId,
             ref:"RatingAndReviews"
-        }
+        },
     ],
     price:{
-        type:Number,
+        type: Number,
     },
     thumbnail:{
-        type:String,
+        type: String,
     },
 	tag: {
 		type: [String],
@@ -47,7 +46,7 @@ const courseSchema = new mongoose.Schema({
 		{
 			type: mongoose.Schema.Types.ObjectId,
 			required: true,
-			ref: "user",
+			ref: "User",
 		},
 	],
 	instructions: {

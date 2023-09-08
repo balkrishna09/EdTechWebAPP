@@ -85,7 +85,7 @@ exports.updateSection = async(req, res)=>{
 exports.deleteSection = async(req,res)=>{
     try {
         //fetch id from url parameter
-        const {sectionId} = req.params;
+        const {sectionId} = req.body;
 
         //validation
         if(!sectionId){
@@ -96,7 +96,7 @@ exports.deleteSection = async(req,res)=>{
         }
 
         //delete
-        await Section.findByIdAndDelete({sectionId});
+        await Section.findByIdAndDelete(sectionId);
 
         // todo do we need to delete the entry from course schema 
 

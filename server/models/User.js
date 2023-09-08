@@ -23,13 +23,22 @@ const userSchema = new mongoose.Schema({
         type:String,
         enum:["Admin", "Student", "Instructor"],
         required:true,
-        default:"User"
+        default:"Student"
     },
     additionalDetails:{
         type:mongoose.Schema.Types.ObjectID,
         required:true,
         ref:"Profile"
     },
+    approved:{
+        type : Boolean ,  //default value is false if not specified in the schema
+        default:true,
+    },
+    active:{
+        type :Boolean,//default value is true if not specified in the schema
+        default:true
+    },
+    
     courses:[{
         type:mongoose.Schema.Types.ObjectID,
         ref:'Course'  //refers to the course model
